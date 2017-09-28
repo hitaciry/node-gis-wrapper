@@ -4,5 +4,7 @@ import EXPA from "./wrapper"
 const app= express();
 
 app.post("/token", function (req, res) {
-  res.send(expa(req.body.email,req.body.password).getNewToken().then(console.log).catch(console.log))
+  expa(req.body.email,req.body.password).getNewToken().then(res.send).catch(res.send)
 })
+
+app.get("/",(req, res)=>res.send("I'm working"))
