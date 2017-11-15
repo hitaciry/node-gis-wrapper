@@ -17,6 +17,7 @@ const bot = new TelegramBot(token, {polling: true});
 
 // Написать мне ... (/echo Hello World! - пришлет сообщение с этим приветствием.)
 bot.onText(/\/getNew/, function (msg, match) {
+  console.log('get request')
     const fromId = msg.from.id;
     const date = new Date()
     const resp = EXPA(login,password).post('people.json',{"filters[home_committee]":1618,
@@ -24,11 +25,13 @@ bot.onText(/\/getNew/, function (msg, match) {
     bot.sendMessage(fromId, 'Im work' );
 });
 bot.onText(/\/start/, (msg) => {
+  console.log('get request')
   
   bot.sendMessage(msg.chat.id, "Welcome");
       
   });
 bot.onText(/\/hello/, function (msg, match) {
+  console.log('get request')
   const fromId = msg.from.id;
   const resp = 'hello';
   bot.sendMessage(fromId, resp);
