@@ -4,20 +4,18 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _wrapper = require('.wrapper.js');
+var _wrapper = require('./wrapper');
 
-var expa = _interopRequireWildcard(_wrapper);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+var _wrapper2 = _interopRequireDefault(_wrapper);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = (0, _express2.default)();
 
 app.post("/token", function (req, res) {
-  res.send(expa(req.body.email, req.body.password).getNewToken().then(console.log).catch(console.log));
+  expa(req.body.email, req.body.password).getNewToken().then(res.send).catch(res.send);
 });
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+app.get("/", function (req, res) {
+  return res.send("I'm working");
 });
