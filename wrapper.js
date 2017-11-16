@@ -14,13 +14,13 @@ function EXPA(username, password, enforceSSL){
 	});
 
 	var _ = {},
-	_baseUrl = 'https://gis-api.aiesec.org/v2',
+	_baseUrl = 'https://gis-api.aiesec.org/v2/',
 	_token;
 
 	var tokenRequest = function(){
 		var deferred = q();
 		
-		r.get('https://experience.aiesec.org/auth', (error, response, body) => {
+		r.get('https://experience.aiesec.org/', (error, response, body) => {
 			var match = body.match('<meta.*content="(.*)".*name="csrf-token"');
 
 			r.post({
@@ -51,8 +51,8 @@ function EXPA(username, password, enforceSSL){
 
 	 _.getNewToken = function() {
 		return tokenRequest().then((response) => {
-			var cookie = JSON.parse( decodeURIComponent(response.req._headers.cookie).match('aiesec_token=(.*)')[1]);
-			var token = cookie.token.access_token;
+	 		var cookie = response.req._headers.cookie;
+	 		var token = cookie.match('expa_token=(.*)')[1].replace(/;.*/, '');
 	 		_token = token;
 	 		return token;
 	 	});

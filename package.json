@@ -2,7 +2,7 @@
   "name": "node-gis-wrapper",
   "version": "0.0.1",
   "description": "A node module for easy interaction with the EXPA API",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "babel index.js --out-file dist/index.js",
     "start": "babel-node index.js ",
