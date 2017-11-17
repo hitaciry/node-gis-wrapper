@@ -26,7 +26,7 @@ bot.onText(/\/getNew/, function (msg, match) {
     'per_page': 100,
     'filters[registered][from]': date.toJSON().slice(0, 10) }).then(function (response) {
     response.data.length > 0 ? bot.sendMessage(msg.chat.id, ('total ' + response.paging.total_items + '\n').concat(response.data.map(function (user) {
-      return user.full_name + ' ' + user.home_lc.name + ' ' + user.referral_type;
+      return '<a href=\'https://experience.aiesec.org/#/people/' + user.id + '\' >' + user.full_name + '</a> ' + user.home_lc.name + ' ' + user.referral_type;
     }).join('\n'))) : bot.sendMessage(msg.chat.id, 'Nothing new(');
   }).catch(console.log);
   bot.sendMessage(msg.chat.id, 'Im work...');
