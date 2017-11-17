@@ -22,10 +22,12 @@ const date = new Date()
     console.log(date.toJSON())
     const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
     { 'filters[home_committee]':1618,
+      'per_page':100,
       'filters[registered][from]':date.toJSON().slice(0,10)}).then(
-       (response)=>{response.data.length>0?bot.sendMessage(msg.chat.id,response.data.map(user=>`${user.full_name} ${user.home_lc.name} ${user.referral_type}`).join('\n')) 
-      :bot.sendMessage(msg.chat.id, 'Nothing new(' );
-       console.log(response) 
+       (response)=>{response.data.length>0?bot.sendMessage(msg.chat.id,
+        `total ${response.paging.total_items}\n`.concat(
+        response.data.map(user=>`${user.full_name} ${user.home_lc.name} ${user.referral_type}`).join('\n'))) 
+      :bot.sendMessage(msg.chat.id, 'Nothing new(' )
       }).catch(console.log)
     bot.sendMessage(msg.chat.id, 'Im work...' );
 });
