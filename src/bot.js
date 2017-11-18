@@ -19,16 +19,11 @@ const date = new Date()
       'filters[registered][from]':date.toJSON().slice(0,10)})
       .then((response)=>{
         if(response.data.length>0){
-          bot.sendMessage(msg.chat.id,
-          `total ${response.paging.total_items}\n`.concat(
-          response.data.slice(0,response.data.length/2)
-          .map(user=>`<a href='https://experience.aiesec.org/#/people/${user.id}' >${user.full_name}</a> ${user.home_lc.name} ${user.referral_type}`)
-          .join('\n')))
-          bot.sendMessage(msg.chat.id,
-            response.data.slice(response.data.length/2+1)
-            .map(user=>`<a href='https://experience.aiesec.org/#/people/${user.id}' >${user.full_name}</a> ${user.home_lc.name} ${user.referral_type}`)
-            .join('\n')
-          )}
+          bot.sendMessage(msg.chat.id,`total ${response.paging.total_items} at ${date.toJSON()}`)
+          response.data.map(u=>expa.get(`people/${u.id}.json`).then((user)=>{
+            bot.sendMessage(msg.chat.id,`<a href="https://experience.aiesec.org/#/people/${user.id}" >${user.full_name}</a> ${user.home_lc.name} ${user.referral_type}`,{parse_mode : "HTML"})
+          }).catch(console.log))
+        }
           else
             bot.sendMessage(msg.chat.id, 'Nothing new(' )
       }).catch(console.log)

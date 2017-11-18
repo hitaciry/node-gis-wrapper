@@ -26,12 +26,13 @@ bot.onText(/\/getNew/, function (msg, match) {
     'per_page': 100,
     'filters[registered][from]': date.toJSON().slice(0, 10) }).then(function (response) {
     if (response.data.length > 0) {
-      bot.sendMessage(msg.chat.id, ('total ' + response.paging.total_items + '\n').concat(response.data.slice(0, response.data.length / 2).map(function (user) {
-        return '<a href=\'https://experience.aiesec.org/#/people/' + user.id + '\' >' + user.full_name + '</a> ' + user.home_lc.name + ' ' + user.referral_type;
-      }).join('\n')));
-      bot.sendMessage(msg.chat.id, response.data.slice(response.data.length / 2 + 1).map(function (user) {
-        return '<a href=\'https://experience.aiesec.org/#/people/' + user.id + '\' >' + user.full_name + '</a> ' + user.home_lc.name + ' ' + user.referral_type;
-      }).join('\n'));
+      bot.sendMessage(msg.chat.id, 'total ' + response.paging.total_items + ' at ' + date.toJSON());
+      response.data.map(function (u) {
+        return expa.get('people/' + u.id + '.json').then(function (user) {
+          console.log(user);
+          bot.sendMessage(msg.chat.id, '<a href="https://experience.aiesec.org/#/people/' + user.id + '" >' + user.full_name + '</a> ' + user.home_lc.name + ' ' + user.referral_type, { parse_mode: "HTML" });
+        }).catch(console.log);
+      });
     } else bot.sendMessage(msg.chat.id, 'Nothing new(');
   }).catch(console.log);
   bot.sendMessage(msg.chat.id, 'Im work...');
