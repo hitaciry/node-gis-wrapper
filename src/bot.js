@@ -37,6 +37,6 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request')
   const fromId = msg.from.id;
-  const resp = `hello, dear ${msg.from.username}\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia`;
+  const resp = `hello, dear ${msg.from.first_name}\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia`;
   bot.sendMessage(fromId, resp);
 });

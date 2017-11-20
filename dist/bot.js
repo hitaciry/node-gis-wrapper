@@ -43,6 +43,6 @@ bot.onText(/\/start/, function (msg) {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request');
   var fromId = msg.from.id;
-  var resp = 'hello, dear ' + msg.from.username + '\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia';
+  var resp = 'hello, dear ' + msg.from.first_name + '\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia';
   bot.sendMessage(fromId, resp);
 });
