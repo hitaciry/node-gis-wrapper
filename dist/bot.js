@@ -15,7 +15,6 @@ var password = 'hitaciry90';
 var token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
 // Включить опрос сервера
 var bot = new _nodeTelegramBotApi2.default(token, { polling: true });
-// Написать мне ... (/echo Hello World! - пришлет сообщение с этим приветствием.)
 var expa = (0, _wrapper2.default)(login, password);
 bot.onText(/\/getNew/, function (msg, match) {
   console.log('get request');
@@ -29,7 +28,6 @@ bot.onText(/\/getNew/, function (msg, match) {
       bot.sendMessage(msg.chat.id, 'total ' + response.paging.total_items + ' at ' + date.toJSON());
       response.data.map(function (u) {
         return expa.get('people/' + u.id + '.json').then(function (user) {
-          console.log(user);
           bot.sendMessage(msg.chat.id, '<a href="https://experience.aiesec.org/#/people/' + user.id + '" >' + user.full_name + '</a> ' + user.home_lc.name + ' ' + user.referral_type, { parse_mode: "HTML" });
         }).catch(console.log);
       });
@@ -45,6 +43,6 @@ bot.onText(/\/start/, function (msg) {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request');
   var fromId = msg.from.id;
-  var resp = 'hello';
+  var resp = 'hello, dear ' + msg.from.username + '\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia';
   bot.sendMessage(fromId, resp);
 });

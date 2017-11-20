@@ -6,7 +6,6 @@ const password = 'hitaciry90'
 const token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
 // Включить опрос сервера
 const bot = new TelegramBot(token, {polling: true});
-// Написать мне ... (/echo Hello World! - пришлет сообщение с этим приветствием.)
 const expa=EXPA(login,password)
 bot.onText(/\/getNew/, function (msg, match) {
   console.log('get request')
@@ -38,6 +37,6 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request')
   const fromId = msg.from.id;
-  const resp = 'hello';
+  const resp = `hello, dear ${msg.from.username}\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia`;
   bot.sendMessage(fromId, resp);
 });
