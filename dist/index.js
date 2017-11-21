@@ -14,6 +14,7 @@ var app = (0, _express2.default)();
 app.set('port', process.env.PORT || 5000);
 
 app.post("/token", function (req, res) {
+  console.log(req.body);
   (0, _wrapper2.default)(req.body.email, req.body.password).getNewToken().then(res.send).catch(res.send);
 });
 app.get("/", function (req, res) {
