@@ -11,26 +11,57 @@ bot.onText(/\/getNew/, function (msg, match) {
   console.log('get request')
 const date = new Date()
     const fromId = msg.from.id;
+    const blackList =msg.from.username!=='Tanichitto'
     console.log(date.toJSON())
     const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
     { 'filters[home_committee]':1618,
       'per_page':100,
       'filters[registered][from]':date.toJSON().slice(0,10)})
       .then((response)=>{
+        if(blackList){
+          bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
+          return
+        }
         if(response.data.length>0){
           bot.sendMessage(msg.chat.id,`total ${response.paging.total_items} at ${date.toJSON()}`)
           response.data.map(u=>expa.get(`people/${u.id}.json`).then((user)=>{
             bot.sendMessage(msg.chat.id,`<a href="https://experience.aiesec.org/#/people/${user.id}" >${user.full_name}</a> ${user.home_lc.name} ${user.referral_type}`,{parse_mode : "HTML"})
           }).catch(console.log))
         }
-          else
-            bot.sendMessage(msg.chat.id, 'Nothing new(' )
+        else
+          bot.sendMessage(msg.chat.id, 'Nothing new(' )
+      }).catch(console.log)
+    bot.sendMessage(msg.chat.id, 'Im work...' );
+});
+
+bot.onText(/\/getNewLC (.+)/, function (msg, match) {
+  console.log('get request')
+const date = new Date()
+    const fromId = msg.from.id;
+    const blackList =msg.from.username!=='Tanichitto'
+    console.log(date.toJSON())
+    const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
+    { 'filters[home_committee]':match[1],
+      'per_page':100,
+      'filters[registered][from]':date.toJSON().slice(0,10)})
+      .then((response)=>{
+        if(blackList){
+          bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
+          return
+        }
+        if(response.data.length>0){
+          bot.sendMessage(msg.chat.id,`total ${response.paging.total_items} at ${date.toJSON()}`)
+          response.data.map(u=>expa.get(`people/${u.id}.json`).then((user)=>{
+            bot.sendMessage(msg.chat.id,`<a href="https://experience.aiesec.org/#/people/${user.id}" >${user.full_name}</a> ${user.home_lc.name} ${user.referral_type}`,{parse_mode : "HTML"})
+          }).catch(console.log))
+        }
+        else
+          bot.sendMessage(msg.chat.id, 'Nothing new(' )
       }).catch(console.log)
     bot.sendMessage(msg.chat.id, 'Im work...' );
 });
 bot.onText(/\/start/, (msg) => {
-  console.log('get request')
-  
+  console.log('get request')  
   bot.sendMessage(msg.chat.id, "Welcome");
       
   });
