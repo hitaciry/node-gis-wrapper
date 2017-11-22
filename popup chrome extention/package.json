@@ -1,0 +1,15 @@
+{
+  "name": "get_token_aiesec_gis",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "andrey.shitikov@aiesec.net",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "node-gis-wrapper": "^0.0.2",
+    "webpack": "^3.6.0"
+  },
+  "scripts": {
+    "build": "webpack --watch"
+  }
+}
