@@ -15,7 +15,7 @@ var _bodyParser2 = _interopRequireDefault(_bodyParser);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = (0, _express2.default)();
-
+var expa = null;
 app.use(_bodyParser2.default.urlencoded({ extended: true }));
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -27,8 +27,8 @@ app.listen(process.env.PORT || 3000, function () {
 });
 
 app.post("/token", _bodyParser2.default.urlencoded({ extended: true }), function (req, res, next) {
-  console.log(req.headers);
-  (0, _wrapper2.default)(req.body.email, req.body.password).getToken().then(function (t) {
+  expa = (0, _wrapper2.default)(req.body.email, req.body.password);
+  expa.getToken().then(function (t) {
     console.log(t);res.send(t);next();
   }).catch(function (e) {
     console.log(e);res.send(e);

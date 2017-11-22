@@ -3,7 +3,7 @@ import EXPA from "./wrapper"
 import bodyParser from 'body-parser'
 
 const app= express();
-
+let expa =null;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -15,8 +15,8 @@ app.listen(process.env.PORT || 3000, function(){
 })
 
 app.post("/token",bodyParser.urlencoded({ extended: true }), function (req, res, next) {
-  console.log(req.headers)
-  EXPA(req.body.email,req.body.password).getToken()
+  expa= EXPA(req.body.email,req.body.password)
+ expa.getToken()
   .then(t=>{console.log(t);res.send(t);next()})
   .catch(e=>{console.log(e);res.send(e)})
 })
