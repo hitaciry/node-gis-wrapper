@@ -20,7 +20,7 @@ bot.onText(/\/getNew/, function (msg, match) {
   console.log('get request');
   var date = new Date();
   var fromId = msg.from.id;
-  var blackList = msg.from.username !== 'Tanichitto';
+  var blackList = msg.from.username === 'Tanichitto';
   console.log(date.toJSON());
   var resp = expa.get('https://gis-api.aiesec.org/v2/people.json', { 'filters[home_committee]': 1618,
     'per_page': 100,

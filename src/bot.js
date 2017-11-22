@@ -11,7 +11,7 @@ bot.onText(/\/getNew/, function (msg, match) {
   console.log('get request')
 const date = new Date()
     const fromId = msg.from.id;
-    const blackList =msg.from.username!=='Tanichitto'
+    const blackList =msg.from.username==='Tanichitto'
     console.log(date.toJSON())
     const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
     { 'filters[home_committee]':1618,
