@@ -23,7 +23,12 @@ function EXPA(username, password, enforceSSL){
 		r.get('https://experience.aiesec.org/', (error, response, body) => {
 			console.log(body)
 			var match = body.match('<meta.*content="(.*)".*name="csrf-token"');
-
+			if(!match){
+				var cookie = response.req._headers.cookie;
+				var token = cookie.match('expa_token=(.*)')[1].replace(/;.*/, '');
+				_token = token;
+				return token;
+			}
 			r.post({
 				url: 'https://auth.aiesec.org/users/sign_in',
 				form: {
