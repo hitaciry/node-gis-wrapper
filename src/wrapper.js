@@ -21,6 +21,7 @@ function EXPA(username, password, enforceSSL){
 		var deferred = q();
 		
 		r.get('https://experience.aiesec.org/', (error, response, body) => {
+			console.log(body)
 			var match = body.match('<meta.*content="(.*)".*name="csrf-token"');
 
 			r.post({
