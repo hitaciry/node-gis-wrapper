@@ -25,10 +25,10 @@ function EXPA(username, password, enforceSSL) {
 		var deferred = q();
 
 		r.get('https://experience.aiesec.org/', function (error, response, body) {
-			console.log(body);
 			var match = body.match('<meta.*content="(.*)".*name="csrf-token"');
 			if (!match) {
 				var cookie = response.req._headers.cookie;
+				console.log(cookie);
 				var token = cookie.match('expa_token=(.*)')[1].replace(/;.*/, '');
 				_token = token;
 				return token;
