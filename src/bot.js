@@ -39,7 +39,7 @@ bot.onText(/\/lc/, function (msg, match) {
 const date = new Date()
     const fromId = msg.from.id;
     const blackList =msg.from.username!=='Tanichitto'
-    if(blackList){
+    if(!blackList){
       bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
       return
     }
@@ -63,7 +63,7 @@ const date = new Date()
       'per_page':100,
       'filters[registered][from]':date.toJSON().slice(0,10)})
       .then((response)=>{
-        if(blackList){
+        if(!blackList){
           bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
           return
         }

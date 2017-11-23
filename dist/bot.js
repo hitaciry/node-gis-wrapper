@@ -46,7 +46,7 @@ bot.onText(/\/lc/, function (msg, match) {
   var date = new Date();
   var fromId = msg.from.id;
   var blackList = msg.from.username !== 'Tanichitto';
-  if (blackList) {
+  if (!blackList) {
     bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
     return;
   }
@@ -67,7 +67,7 @@ bot.onText(/\/getNewLC (.+)/, function (msg, match) {
   var resp = expa.get('https://gis-api.aiesec.org/v2/people.json', { 'filters[home_committee]': match[1],
     'per_page': 100,
     'filters[registered][from]': date.toJSON().slice(0, 10) }).then(function (response) {
-    if (blackList) {
+    if (!blackList) {
       bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
       return;
     }
