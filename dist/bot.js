@@ -16,7 +16,7 @@ var token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
 // Включить опрос сервера
 var bot = new _nodeTelegramBotApi2.default(token, { polling: true });
 var expa = (0, _wrapper2.default)(login, password);
-bot.onText(/\/getNew/, function (msg, match) {
+bot.onText(/\/newMC/, function (msg, match) {
   console.log('get request');
   var date = new Date();
   var fromId = msg.from.id;
@@ -89,6 +89,6 @@ bot.onText(/\/start/, function (msg) {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request');
   var fromId = msg.from.id;
-  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /getNew - return all users who registered today on GMT time in AIESEC Russia\n  /lc -return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today on GMT time in LC with id\n                ';
+  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /newMC - return all users who registered today on GMT time in AIESEC Russia\n  /lc -return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today on GMT time in LC with id\n                ';
   bot.sendMessage(fromId, resp);
 });
