@@ -52,7 +52,9 @@ bot.onText(/\/lc/, function (msg, match) {
   }
   console.log(date.toJSON());
   var resp = expa.get('https://gis-api.aiesec.org/v2/committees/1618.json').then(function (response) {
-    response.suboffices.map(function (u) {
+    response.suboffices.filter(function (f) {
+      return !f.name.includes('Closed');
+    }).map(function (u) {
       bot.sendMessage(msg.chat.id, u.id + ' ' + u.name);
     });
   }).catch(console.log);

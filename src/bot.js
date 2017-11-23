@@ -46,7 +46,7 @@ const date = new Date()
     console.log(date.toJSON())
     const resp = expa.get('https://gis-api.aiesec.org/v2/committees/1618.json')
       .then((response)=>{
-          response.suboffices.map(u=>{
+          response.suboffices.filter(f=>!f.name.includes('Closed')).map(u=>{
             bot.sendMessage(msg.chat.id,`${u.id} ${u.name}`)
           })
       }).catch(console.log)
