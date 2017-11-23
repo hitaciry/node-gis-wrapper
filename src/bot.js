@@ -7,7 +7,7 @@ const token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
 // Включить опрос сервера
 const bot = new TelegramBot(token, {polling: true});
 const expa=EXPA(login,password)
-bot.onText(/\/getNew/, function (msg, match) {
+bot.onText(/\/newMC/, function (msg, match) {
   console.log('get request')
 const date = new Date()
     const fromId = msg.from.id;
@@ -52,7 +52,7 @@ const date = new Date()
       }).catch(console.log)
     bot.sendMessage(msg.chat.id, 'Im work...' );
 });
-bot.onText(/\/getNewLC (.+)/, function (msg, match) {
+bot.onText(/\/newLC (.+)/, function (msg, match) {
   console.log('get request')
 const date = new Date()
     const fromId = msg.from.id;
@@ -86,11 +86,11 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request')
   const fromId = msg.from.id;
-  const resp = `hello, dear ${msg.from.first_name}\n
-  Commands:\n
-  /getNew - return all users who registered today on GMT time in AIESEC Russia\n
-  /lc -return list of LC with name and Id\n
-  /getNewLC <replace with LC id> - return all users who registered today on GMT time in LC with id\n
+  const resp = `hello, dear ${msg.from.first_name}
+  Commands:
+  /newMC - return all users who registered today on GMT time in AIESEC Russia
+  /lc -return list of LC with name and Id
+  /newLC <LC id> - return all users who registered today on GMT time in LC with id
                 `;
   bot.sendMessage(fromId, resp);
 });

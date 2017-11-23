@@ -58,7 +58,7 @@ bot.onText(/\/lc/, function (msg, match) {
   }).catch(console.log);
   bot.sendMessage(msg.chat.id, 'Im work...');
 });
-bot.onText(/\/getNewLC (.+)/, function (msg, match) {
+bot.onText(/\/newLC (.+)/, function (msg, match) {
   console.log('get request');
   var date = new Date();
   var fromId = msg.from.id;
@@ -89,6 +89,6 @@ bot.onText(/\/start/, function (msg) {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request');
   var fromId = msg.from.id;
-  var resp = 'hello, dear ' + msg.from.first_name + '\n\n  Commands:\n\n  /getNew - return all users who registered today on GMT time in AIESEC Russia\n\n  /lc -return list of LC with name and Id\n\n  /getNewLC <replace with LC id> - return all users who registered today on GMT time in LC with id\n\n                ';
+  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /getNew - return all users who registered today on GMT time in AIESEC Russia\n  /lc -return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today on GMT time in LC with id\n                ';
   bot.sendMessage(fromId, resp);
 });
