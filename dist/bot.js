@@ -41,6 +41,23 @@ bot.onText(/\/getNew/, function (msg, match) {
   bot.sendMessage(msg.chat.id, 'Im work...');
 });
 
+bot.onText(/\/lc/, function (msg, match) {
+  console.log('get request');
+  var date = new Date();
+  var fromId = msg.from.id;
+  var blackList = msg.from.username !== 'Tanichitto';
+  if (blackList) {
+    bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
+    return;
+  }
+  console.log(date.toJSON());
+  var resp = expa.get('https://gis-api.aiesec.org/v2/committees/1618.json').then(function (response) {
+    response.suboffices.map(function (u) {
+      bot.sendMessage(msg.chat.id, u.id + ' ' + u.name);
+    });
+  }).catch(console.log);
+  bot.sendMessage(msg.chat.id, 'Im work...');
+});
 bot.onText(/\/getNewLC (.+)/, function (msg, match) {
   console.log('get request');
   var date = new Date();
@@ -72,6 +89,6 @@ bot.onText(/\/start/, function (msg) {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request');
   var fromId = msg.from.id;
-  var resp = 'hello, dear ' + msg.from.first_name + '\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia';
+  var resp = 'hello, dear ' + msg.from.first_name + '\n\n  Commands:\n\n  /getNew - return all users who registered today on GMT time in AIESEC Russia\n\n  /lc -return list of LC with name and Id\n\n  /getNewLC <replace with LC id> - return all users who registered today on GMT time in LC with id\n\n                ';
   bot.sendMessage(fromId, resp);
 });

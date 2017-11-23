@@ -34,6 +34,24 @@ const date = new Date()
     bot.sendMessage(msg.chat.id, 'Im work...' );
 });
 
+bot.onText(/\/lc/, function (msg, match) {
+  console.log('get request')
+const date = new Date()
+    const fromId = msg.from.id;
+    const blackList =msg.from.username!=='Tanichitto'
+    if(blackList){
+      bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
+      return
+    }
+    console.log(date.toJSON())
+    const resp = expa.get('https://gis-api.aiesec.org/v2/committees/1618.json')
+      .then((response)=>{
+          response.suboffices.map(u=>{
+            bot.sendMessage(msg.chat.id,`${u.id} ${u.name}`)
+          })
+      }).catch(console.log)
+    bot.sendMessage(msg.chat.id, 'Im work...' );
+});
 bot.onText(/\/getNewLC (.+)/, function (msg, match) {
   console.log('get request')
 const date = new Date()
@@ -68,6 +86,11 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/\/hello/, function (msg, match) {
   console.log('get request')
   const fromId = msg.from.id;
-  const resp = `hello, dear ${msg.from.first_name}\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia`;
+  const resp = `hello, dear ${msg.from.first_name}\n
+  Commands:\n
+  /getNew - return all users who registered today on GMT time in AIESEC Russia\n
+  /lc -return list of LC with name and Id\n
+  /getNewLC <replace with LC id> - return all users who registered today on GMT time in LC with id\n
+                `;
   bot.sendMessage(fromId, resp);
 });
