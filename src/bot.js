@@ -38,8 +38,8 @@ bot.onText(/\/lc/, function (msg, match) {
   console.log('get request')
 const date = new Date()
     const fromId = msg.from.id;
-    const blackList =msg.from.username!=='Tanichitto'
-    if(!blackList){
+    const blackList =msg.from.username==='Tanichitto'
+    if(blackList){
       bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
       return
     }
@@ -56,17 +56,17 @@ bot.onText(/\/getNewLC (.+)/, function (msg, match) {
   console.log('get request')
 const date = new Date()
     const fromId = msg.from.id;
-    const blackList =msg.from.username!=='Tanichitto'
+    const blackList =msg.from.username==='Tanichitto'
+    if(blackList){
+      bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
+      return
+    }
     console.log(date.toJSON())
     const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
     { 'filters[home_committee]':match[1],
       'per_page':100,
       'filters[registered][from]':date.toJSON().slice(0,10)})
       .then((response)=>{
-        if(!blackList){
-          bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
-          return
-        }
         if(response.data.length>0){
           bot.sendMessage(msg.chat.id,`total ${response.paging.total_items} at ${date.toJSON()}`)
           response.data.map(u=>expa.get(`people/${u.id}.json`).then((user)=>{
