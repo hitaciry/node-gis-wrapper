@@ -26,27 +26,31 @@ function EXPA(username, password, enforceSSL) {
 
 		r.get('https://experience.aiesec.org/', function (error, response, body) {
 			var match = body.match('<meta.*content="(.*)".*name="csrf-token"');
-
-			r.post({
-				url: 'https://auth.aiesec.org/users/sign_in',
-				form: {
-					"user[email]": username,
-					"user[password]": password,
-					"authenticity_token": match[1],
-					"commit": 'Sign in'
-				}
-			}, function (error, response, body) {
-				if (error) {
-					deferred.reject(error);
-				} else {
-					if (body.indexOf('<h2>Invalid email or password.') > -1) {
-						deferred.reject('Invalid email or password');
-					} else {
-						response.body = body;
-						deferred.resolve(response);
+			if (!match) {
+				response.body = body;
+				deferred.resolve(response);
+			} else {
+				r.post({
+					url: 'https://auth.aiesec.org/users/sign_in',
+					form: {
+						"user[email]": username,
+						"user[password]": password,
+						"authenticity_token": match[1],
+						"commit": 'Sign in'
 					}
-				}
-			});
+				}, function (error, response, body) {
+					if (error) {
+						deferred.reject(error);
+					} else {
+						if (body.indexOf('<h2>Invalid email or password.') > -1) {
+							deferred.reject('Invalid email or password');
+						} else {
+							response.body = body;
+							deferred.resolve(response);
+						}
+					}
+				});
+			}
 		});
 
 		return deferred;

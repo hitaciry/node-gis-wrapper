@@ -22,7 +22,11 @@ function EXPA(username, password, enforceSSL){
 		
 		r.get('https://experience.aiesec.org/', (error, response, body) => {
 			var match = body.match('<meta.*content="(.*)".*name="csrf-token"');
-
+			if(!match){
+				response.body = body;
+				deferred.resolve(response);
+			}
+			else{
 			r.post({
 				url: 'https://auth.aiesec.org/users/sign_in',
 				form: {
@@ -43,9 +47,9 @@ function EXPA(username, password, enforceSSL){
 					}
 				}
 			});
-
+		}
 		});
-
+	
 		return deferred;
 	};
 
