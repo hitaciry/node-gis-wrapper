@@ -1,0 +1,14 @@
+{
+  "user":{
+    "id":"guid",
+    "name": "Tom Young",
+    "section": "Social"
+  },
+  "workshops":[{
+    //company name usually
+    "name":"SunInbev",
+    "section":"Social",
+    "Limit":40,
+    "attend":0
+  }]
+}

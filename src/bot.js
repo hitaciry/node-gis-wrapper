@@ -1,19 +1,32 @@
 import EXPA from './wrapper'
 import TelegramBot from 'node-telegram-bot-api'
+import * as serviceAccount from "db.json"
+import firebase from "firebase"
+
 
 const login = 'a.shitikov90@gmail.com'
 const password = 'hitaciry90'
 const token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
+
+import  firebase from 'firebase'
+
+const config ={
+  apiKey: "7OlVhkAn0Q5NDiUeuK50MXhTCt9hqn7hRvSV5vyI",
+  authDomain: "bot-db-935c6.firebaseapp.com",
+  databaseURL: "https://bot-db-935c6.firebaseio.com"
+}
+const db = firebase.database(firebase.initializeApp(config))
+
 // Включить опрос сервера
 const bot = new TelegramBot(token, {polling: true});
 const expa=EXPA(login,password)
 bot.onText(/\/getNew/, function (msg, match) {
   console.log('get request')
-const date = new Date()
-    const fromId = msg.from.id;
-    const blackList =msg.from.username!=='Tanichitto'
-    console.log(date.toJSON())
-    const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
+  const date = new Date()
+  const fromId = msg.from.id;
+  const blackList =msg.from.username!=='Tanichitto'
+  console.log(date.toJSON())
+  const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
     { 'filters[home_committee]':1618,
       'per_page':100,
       'filters[registered][from]':date.toJSON().slice(0,10)})
@@ -35,12 +48,10 @@ const date = new Date()
 });
 
 bot.onText(/\/getNewLC (.+)/, function (msg, match) {
-  console.log('get request')
-const date = new Date()
-    const fromId = msg.from.id;
-    const blackList =msg.from.username!=='Tanichitto'
-    console.log(date.toJSON())
-    const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
+  const date = new Date()
+  const fromId = msg.from.id;
+  const blackList =msg.from.username!=='Tanichitto'
+  const resp = expa.get('https://gis-api.aiesec.org/v2/people.json',
     { 'filters[home_committee]':match[1],
       'per_page':100,
       'filters[registered][from]':date.toJSON().slice(0,10)})
@@ -66,7 +77,6 @@ bot.onText(/\/start/, (msg) => {
       
   });
 bot.onText(/\/hello/, function (msg, match) {
-  console.log('get request')
   const fromId = msg.from.id;
   const resp = `hello, dear ${msg.from.first_name}\nCommands:\n/getNew - return all users who registered today on GMT time in AIESEC Russia`;
   bot.sendMessage(fromId, resp);
