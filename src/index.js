@@ -20,9 +20,5 @@ app.post("/token",bodyParser.urlencoded({ extended: true }), function (req, res,
   .then(t=>{console.log(t);res.send(t);next()})
   .catch(e=>{console.log(e);res.send(e)})
 })
-app.post("/request", function (req, res) {
-  const login = 'a.shitikov90@gmail.com'
-  const password = 'hitaciry90'
-  EXPA(login,password).get(req.body.url,req.body).then(res.send.json()).catch(res.send)
-})
+
 app.get("/",(req, res)=>res.send("I'm working"))

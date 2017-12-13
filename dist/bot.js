@@ -8,20 +8,36 @@ var _nodeTelegramBotApi = require('node-telegram-bot-api');
 
 var _nodeTelegramBotApi2 = _interopRequireDefault(_nodeTelegramBotApi);
 
+var _db = require('db.json');
+
+var serviceAccount = _interopRequireWildcard(_db);
+
+var _firebase = require('firebase');
+
+var _firebase2 = _interopRequireDefault(_firebase);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var login = 'a.shitikov90@gmail.com';
 var password = 'hitaciry90';
 var token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
+
+var config = {
+  apiKey: "7OlVhkAn0Q5NDiUeuK50MXhTCt9hqn7hRvSV5vyI",
+  authDomain: "bot-db-935c6.firebaseapp.com",
+  databaseURL: "https://bot-db-935c6.firebaseio.com"
+};
+var db = _firebase2.default.database(_firebase2.default.initializeApp(config));
+
 // Включить опрос сервера
 var bot = new _nodeTelegramBotApi2.default(token, { polling: true });
 var expa = (0, _wrapper2.default)(login, password);
 bot.onText(/\/newMC/, function (msg, match) {
-  console.log('get request');
   var date = new Date();
   var fromId = msg.from.id;
   var blackList = msg.from.username === 'Tanichitto';
-  console.log(date.toJSON());
   var resp = expa.get('https://gis-api.aiesec.org/v2/people.json', { 'filters[home_committee]': 1618,
     'per_page': 100,
     'filters[registered][from]': date.toJSON().slice(0, 10) }).then(function (response) {
@@ -42,8 +58,6 @@ bot.onText(/\/newMC/, function (msg, match) {
 });
 
 bot.onText(/\/lc/, function (msg, match) {
-  console.log('get request');
-  var date = new Date();
   var fromId = msg.from.id;
   var blackList = msg.from.username === 'Tanichitto';
   if (blackList) {
@@ -61,7 +75,6 @@ bot.onText(/\/lc/, function (msg, match) {
   bot.sendMessage(msg.chat.id, 'Im work...');
 });
 bot.onText(/\/newLC (.+)/, function (msg, match) {
-  console.log('get request');
   var date = new Date();
   var fromId = msg.from.id;
   var blackList = msg.from.username === 'Tanichitto';
@@ -69,7 +82,6 @@ bot.onText(/\/newLC (.+)/, function (msg, match) {
     bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
     return;
   }
-  console.log(date.toJSON());
   var resp = expa.get('https://gis-api.aiesec.org/v2/people.json', { 'filters[home_committee]': match[1],
     'per_page': 100,
     'filters[registered][from]': date.toJSON().slice(0, 10) }).then(function (response) {
@@ -84,13 +96,40 @@ bot.onText(/\/newLC (.+)/, function (msg, match) {
   }).catch(console.log);
   bot.sendMessage(msg.chat.id, 'Im work...');
 });
+bot.onText(/\/myep (.+) (.+)/, function (msg, match) {
+  var expa_ = (0, _wrapper2.default)(match[1], match[2]);
+  var date = new Date();
+  var fromId = msg.from.id;
+  var blackList = msg.from.username === 'Tanichitto';
+  if (blackList) {
+    bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
+    return;
+  }
+  var resp = expa_.get('https://gis-api.aiesec.org/v2/people.json', { 'filters[my]': true,
+    'per_page': 100 }).then(function (response) {
+    if (response.data.length > 0) {
+      bot.sendMessage(msg.chat.id, 'total ' + response.paging.total_items + ' at ' + date.toJSON());
+      response.data.map(function (u) {
+        return expa.get('people/' + u.id + '/applications.json').then(function (applications) {
+          var relevant_apps = applications.data.filter(function (f) {
+            return new Date(f.updated_at).toJSON().slice(0, 10) === date.toJSON().slice(0, 10);
+          });
+          if (relevant_apps.length > 0) {
+            bot.sendMessage(msg.chat.id, '<a href="https://experience.aiesec.org/#/people/' + user.id + '" >' + user.full_name + '</a>\n                ' + u.country_code + u.phone + '\n                ' + applications.data.map(function (a) {
+              a.status + ' at <a href="https://experience.aiesec.org/#/people/' + a.opportunity.id + '">' + a.opportunity.title + '</a>\n';
+            }), { parse_mode: "HTML" });
+          }
+        }).catch(console.log);
+      });
+    } else bot.sendMessage(msg.chat.id, 'Nothing new(');
+  }).catch(console.log);
+  bot.sendMessage(msg.chat.id, 'Im work...');
+});
 bot.onText(/\/start/, function (msg) {
-  console.log('get request');
   bot.sendMessage(msg.chat.id, "Welcome");
 });
 bot.onText(/\/hello/, function (msg, match) {
-  console.log('get request');
   var fromId = msg.from.id;
-  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /newMC - return all users who registered today on GMT time in AIESEC Russia\n  /lc -return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today on GMT time in LC with id\n                ';
+  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /newMC - return all users who registered today on GMT time in AIESEC Russia\n  /lc - return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today on GMT time in LC with id\n                ';
   bot.sendMessage(fromId, resp);
 });
