@@ -1,6 +1,6 @@
 import EXPA from './wrapper'
 import TelegramBot from 'node-telegram-bot-api'
-import * as serviceAccount from "db.json"
+//import * as serviceAccount from "db.json"
 import firebase from "firebase"
 
 const login = 'a.shitikov90@gmail.com'
@@ -120,6 +120,6 @@ bot.onText(/\/hello/, function (msg, match) {
   /newMC - return all users who registered today on GMT time in AIESEC Russia
   /lc - return list of LC with name and Id
   /newLC <LC id> - return all users who registered today on GMT time in LC with id
-                `;
+  /myep <login> <password> - return your eps with changed state`;
   bot.sendMessage(fromId, resp);
 });

@@ -8,19 +8,15 @@ var _nodeTelegramBotApi = require('node-telegram-bot-api');
 
 var _nodeTelegramBotApi2 = _interopRequireDefault(_nodeTelegramBotApi);
 
-var _db = require('db.json');
-
-var serviceAccount = _interopRequireWildcard(_db);
-
 var _firebase = require('firebase');
 
 var _firebase2 = _interopRequireDefault(_firebase);
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var login = 'a.shitikov90@gmail.com';
+//import * as serviceAccount from "db.json"
+
 var password = 'hitaciry90';
 var token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
 
@@ -130,6 +126,6 @@ bot.onText(/\/start/, function (msg) {
 });
 bot.onText(/\/hello/, function (msg, match) {
   var fromId = msg.from.id;
-  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /newMC - return all users who registered today on GMT time in AIESEC Russia\n  /lc - return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today on GMT time in LC with id\n                ';
+  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /newMC - return all users who registered today on GMT time in AIESEC Russia\n  /lc - return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today on GMT time in LC with id\n  /myep <login> <password> - return your eps with changed state';
   bot.sendMessage(fromId, resp);
 });
