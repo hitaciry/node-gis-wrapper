@@ -49,7 +49,6 @@ bot.onText(/\/lc/, function (msg, match) {
       bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
       return
     }
-    console.log(date.toJSON())
     const resp = expa.get('https://gis-api.aiesec.org/v2/committees/1618.json')
       .then((response)=>{
           response.suboffices.filter(f=>!f.name.includes('Closed')).map(u=>{
@@ -110,6 +109,36 @@ bot.onText(/\/myep (.+) (.+)/, function (msg, match) {
         }).catch(console.log)
       bot.sendMessage(msg.chat.id, 'Im work...' );
   });
+  bot.onText(/\/lcep (.+)/, function (msg, match) {
+    const date = new Date()
+        const fromId = msg.from.id;
+        const blackList =msg.from.username==='Tanichitto'
+        if(blackList){
+          bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
+          return
+        }
+        const resp = expa_.get('https://gis-api.aiesec.org/v2/people.json',
+        { 'filters[home_committee]':match[1],
+          'per_page':100})
+          .then((response)=>{
+            if(response.data.length>0){
+              var i=0;
+              response.data.map(u=>expa.get(`people/${u.id}/applications.json`).then((applications)=>{
+                const relevant_apps= applications.data.filter(f=>new Date(f.updated_at).toJSON().slice(0,10)===date.toJSON().slice(0,10))
+                if(relevant_apps.length>0){
+                bot.sendMessage(msg.chat.id,`<a href="https://experience.aiesec.org/#/people/${user.id}" >${user.full_name}</a>
+                  ${u.country_code}${u.phone}
+                  ${applications.data.map((a)=>{`${a.status} at <a href="https://experience.aiesec.org/#/people/${a.opportunity.id}">${a.opportunity.title}</a>\n`})}`,{parse_mode : "HTML"})
+                i++;}
+                })
+              )
+              .then(t=>bot.sendMessage(msg.chat.id,`total changes ${i} at ${date.toJSON()}`)).catch(console.log)
+            }
+            else
+              bot.sendMessage(msg.chat.id, 'Nothing new(' )
+          }).catch(console.log)
+        bot.sendMessage(msg.chat.id, 'Im work...' );
+    });   
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, "Welcome");      
   });

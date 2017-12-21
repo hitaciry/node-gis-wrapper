@@ -60,7 +60,6 @@ bot.onText(/\/lc/, function (msg, match) {
     bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
     return;
   }
-  console.log(date.toJSON());
   var resp = expa.get('https://gis-api.aiesec.org/v2/committees/1618.json').then(function (response) {
     response.suboffices.filter(function (f) {
       return !f.name.includes('Closed');
@@ -117,6 +116,37 @@ bot.onText(/\/myep (.+) (.+)/, function (msg, match) {
           }
         }).catch(console.log);
       });
+    } else bot.sendMessage(msg.chat.id, 'Nothing new(');
+  }).catch(console.log);
+  bot.sendMessage(msg.chat.id, 'Im work...');
+});
+bot.onText(/\/lcep (.+)/, function (msg, match) {
+  var date = new Date();
+  var fromId = msg.from.id;
+  var blackList = msg.from.username === 'Tanichitto';
+  if (blackList) {
+    bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
+    return;
+  }
+  var resp = expa_.get('https://gis-api.aiesec.org/v2/people.json', { 'filters[home_committee]': match[1],
+    'per_page': 100 }).then(function (response) {
+    if (response.data.length > 0) {
+      var i = 0;
+      response.data.map(function (u) {
+        return expa.get('people/' + u.id + '/applications.json').then(function (applications) {
+          var relevant_apps = applications.data.filter(function (f) {
+            return new Date(f.updated_at).toJSON().slice(0, 10) === date.toJSON().slice(0, 10);
+          });
+          if (relevant_apps.length > 0) {
+            bot.sendMessage(msg.chat.id, '<a href="https://experience.aiesec.org/#/people/' + user.id + '" >' + user.full_name + '</a>\n                  ' + u.country_code + u.phone + '\n                  ' + applications.data.map(function (a) {
+              a.status + ' at <a href="https://experience.aiesec.org/#/people/' + a.opportunity.id + '">' + a.opportunity.title + '</a>\n';
+            }), { parse_mode: "HTML" });
+            i++;
+          }
+        });
+      }).then(function (t) {
+        return bot.sendMessage(msg.chat.id, 'total changes ' + i + ' at ' + date.toJSON());
+      }).catch(console.log);
     } else bot.sendMessage(msg.chat.id, 'Nothing new(');
   }).catch(console.log);
   bot.sendMessage(msg.chat.id, 'Im work...');
