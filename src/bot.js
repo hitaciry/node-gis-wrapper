@@ -141,7 +141,6 @@ bot.onText(/\/myep (.+) (.+)/, function (msg, match) {
 });
 bot.onText(/\/lcep (.+)/, function (msg, match) {
   const date = new Date()
-  const fromId = msg.from.id;
   const blackList = msg.from.username === 'Tanichitto'
   if (blackList) {
     bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
@@ -182,6 +181,40 @@ bot.onText(/\/lceps (.+)/, function (msg, match) {
   }
   db.ref('lcep/' + match[1]).push(fromId).then(t => bot.sendMessage(msg.chat.id, 'you successfully subscribed to notifications'))
   bot.sendMessage(msg.chat.id, 'Im work...')
+});
+
+bot.onText(/\/tnApplicants (.+) (.+) (.+)/, function (msg, match) {
+  const date = new Date()
+  const fromId = msg.from.id;
+  const blackList = msg.from.username === 'Tanichitto'
+  if (blackList) {
+    bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
+    return
+  }
+  const resp = match[1].split(',').map(id => {
+    expa_.get(`https://experience.aiesec.org/#/opportunities/${id}/applications`, {
+        'filters[home_committee]': match[1],
+        'per_page': 100
+      })
+      .then((response) => {
+        if (response.data.length > 0) {
+          response.data.map(async u => {
+            expa.get(`opportunities/${id}/applicant.json?person_id=${u.person.id}`, ).then((applicant) => {
+              bot.sendMessage(msg.chat.id, `<a href="https://experience.aiesec.org/#/opportunities/${id}/applicant.json?person_id=${u.person.id}" >${applicant.full_name}</a> 
+                  +${applicant.contact_info.country_code}${applicant.contact_info.phone}
+                  ${aplicant.home_lc.country}
+                  ${u.status}
+                  ${applicant.managers[0]?`<a href='mailto:${applicant.managers[0].email}'>${applicant.managers[0].full_name}</a> 
+                  +${applicant.managers[0].contact_info.country_code}${applicant.managers[0].contact_info.phone} `:'no managers'}`, {
+                parse_mode: "HTML"
+              })
+            })
+          })
+        } else
+          bot.sendMessage(msg.chat.id, 'Nothing new(')
+      }).catch(console.log)
+  })
+  bot.sendMessage(msg.chat.id, 'Im work...');
 });
 
 bot.onText(/\/start/, (msg) => {
