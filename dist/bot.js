@@ -14,11 +14,9 @@ var _firebase2 = _interopRequireDefault(_firebase);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+var login = 'a.shitikov90@gmail.com';
 //import * as serviceAccount from "db.json"
 
-
-var login = 'a.shitikov90@gmail.com';
 var password = 'hitaciry90';
 var token = '457320898:AAF5Zv-Bw_rm2GHOdo2tyjcWv1etCU0NUTs';
 
@@ -210,50 +208,40 @@ bot.onText(/\/lceps (.+)/, function (msg, match) {
   bot.sendMessage(msg.chat.id, 'Im work...');
 });
 
-bot.onText(/\/tnApplicants (.+) (.+) (.+)/, function (msg, match) {
-  var _this = this;
-
-  var date = new Date();
-  var fromId = msg.from.id;
-  var blackList = msg.from.username === 'Tanichitto';
-  if (blackList) {
-    bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
-    return;
+bot.onText(/\/applicants (.+) (.+) (.+)/, function (msg, match) {
+  try {
+    var date = new Date();
+    var fromId = msg.from.id;
+    var blackList = msg.from.username === 'Tanichitto';
+    if (blackList) {
+      bot.sendMessage(msg.chat.id, 'user not allowed to make this request');
+      return;
+    }
+    var resp = match[1].split(',').map(function (id) {
+      expa_.get('https://experience.aiesec.org/#/opportunities/' + id + '/applications', {
+        'filters[home_committee]': match[1],
+        'per_page': 100
+      }).then(function (response) {
+        var applicants = response.data.filter(function (f) {
+          return (!match[2] || new Date(f.created_at) >= match[2]) && (!match[3] || new Date(f.created_at) <= match[3]);
+        });
+        if (applicants.length > 0) {
+          applicants.map(function (u) {
+            expa.get('opportunities/' + id + '/applicant.json?person_id=' + u.person.id).then(function (applicant) {
+              bot.sendMessage(msg.chat.id, '<a href="https://experience.aiesec.org/#/opportunities/' + id + '/applicant.json?person_id=' + u.person.id + '" >' + applicant.full_name + '</a> \n                  +' + applicant.contact_info.country_code + applicant.contact_info.phone + '\n                  ' + aplicant.home_lc.country + '\n                  ' + u.status + '\n                  ' + (applicant.managers[0] ? '<a href=\'mailto:' + applicant.managers[0].email + '\'>' + applicant.managers[0].full_name + '</a> \n                  +' + applicant.managers[0].contact_info.country_code + applicant.managers[0].contact_info.phone + ' ' : 'no managers'), {
+                parse_mode: "HTML"
+              });
+            });
+          });
+        } else bot.sendMessage(msg.chat.id, 'Nothing new for ' + id + '(');
+      }).catch(function (e) {
+        return bot.sendMessage(msg.chat.id, e.message);
+      });
+    });
+    bot.sendMessage(msg.chat.id, 'Im work...');
+  } catch (e) {
+    bot.sendMessage(msg.chat.id, e.message);
   }
-  var resp = match[1].split(',').map(function (id) {
-    expa_.get('https://experience.aiesec.org/#/opportunities/' + id + '/applications', {
-      'filters[home_committee]': match[1],
-      'per_page': 100
-    }).then(function (response) {
-      if (response.data.length > 0) {
-        response.data.map(function () {
-          var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(u) {
-            return regeneratorRuntime.wrap(function _callee$(_context) {
-              while (1) {
-                switch (_context.prev = _context.next) {
-                  case 0:
-                    expa.get('opportunities/' + id + '/applicant.json?person_id=' + u.person.id).then(function (applicant) {
-                      bot.sendMessage(msg.chat.id, '<a href="https://experience.aiesec.org/#/opportunities/' + id + '/applicant.json?person_id=' + u.person.id + '" >' + applicant.full_name + '</a> \n                  +' + applicant.contact_info.country_code + applicant.contact_info.phone + '\n                  ' + aplicant.home_lc.country + '\n                  ' + u.status + '\n                  ' + (applicant.managers[0] ? '<a href=\'mailto:' + applicant.managers[0].email + '\'>' + applicant.managers[0].full_name + '</a> \n                  +' + applicant.managers[0].contact_info.country_code + applicant.managers[0].contact_info.phone + ' ' : 'no managers'), {
-                        parse_mode: "HTML"
-                      });
-                    });
-
-                  case 1:
-                  case 'end':
-                    return _context.stop();
-                }
-              }
-            }, _callee, _this);
-          }));
-
-          return function (_x) {
-            return _ref.apply(this, arguments);
-          };
-        }());
-      } else bot.sendMessage(msg.chat.id, 'Nothing new(');
-    }).catch(console.log);
-  });
-  bot.sendMessage(msg.chat.id, 'Im work...');
 });
 
 bot.onText(/\/start/, function (msg) {
@@ -261,6 +249,6 @@ bot.onText(/\/start/, function (msg) {
 });
 bot.onText(/\/hello/, function (msg, match) {
   var fromId = msg.from.id;
-  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /newMC - return all users who registered today on GMT time in AIESEC Russia\n  /newMCs - subscribe to all users who registered today on GMT time in AIESEC Russia\n  /lc - return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today (on GMT time) at LC with id\n  /newLCs <LC id>- subscribe to all users who registered today (on GMT time) at LC with id\n  /myep <login> <password> - return your eps with changed state\n  /lcep <LC id> - return eps with changed state for LC id\n  /lceps <LC id> - subscribe to eps with changed state for LC id';
+  var resp = 'hello, dear ' + msg.from.first_name + '\n  Commands:\n  /newMC - return all users who registered today on GMT time in AIESEC Russia\n  /newMCs - subscribe to all users who registered today on GMT time in AIESEC Russia\n  /lc - return list of LC with name and Id\n  /newLC <LC id> - return all users who registered today (on GMT time) at LC with id\n  /newLCs <LC id>- subscribe to all users who registered today (on GMT time) at LC with id\n  /myep <login> <password> - return your eps with changed state\n  /lcep <LC id> - return eps with changed state for LC id\n  /lceps <LC id> - subscribe to eps with changed state for LC id\n  /applicants <TN ids separate by \',\'> <start date> <end date> - return applicants for TNs, who was applied between start and end dates(YYYY-MM-DD)';
   bot.sendMessage(fromId, resp);
 });

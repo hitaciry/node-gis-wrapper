@@ -183,38 +183,43 @@ bot.onText(/\/lceps (.+)/, function (msg, match) {
   bot.sendMessage(msg.chat.id, 'Im work...')
 });
 
-bot.onText(/\/tnApplicants (.+) (.+) (.+)/, function (msg, match) {
-  const date = new Date()
-  const fromId = msg.from.id;
-  const blackList = msg.from.username === 'Tanichitto'
-  if (blackList) {
-    bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
-    return
-  }
-  const resp = match[1].split(',').map(id => {
-    expa_.get(`https://experience.aiesec.org/#/opportunities/${id}/applications`, {
-        'filters[home_committee]': match[1],
-        'per_page': 100
-      })
-      .then((response) => {
-        if (response.data.length > 0) {
-          response.data.map(async u => {
-            expa.get(`opportunities/${id}/applicant.json?person_id=${u.person.id}`, ).then((applicant) => {
-              bot.sendMessage(msg.chat.id, `<a href="https://experience.aiesec.org/#/opportunities/${id}/applicant.json?person_id=${u.person.id}" >${applicant.full_name}</a> 
+bot.onText(/\/applicants (.+) (.+) (.+)/, function (msg, match) {
+  try {
+    const date = new Date()
+    const fromId = msg.from.id;
+    const blackList = msg.from.username === 'Tanichitto'
+    if (blackList) {
+      bot.sendMessage(msg.chat.id, 'user not allowed to make this request')
+      return
+    }
+    const resp = match[1].split(',').map(id => {
+      expa_.get(`https://experience.aiesec.org/#/opportunities/${id}/applications`, {
+          'filters[home_committee]': match[1],
+          'per_page': 100
+        })
+        .then((response) => {
+          var applicants = response.data.filter(f => (!match[2] || new Date(f.created_at) >= match[2]) && (!match[3] || new Date(f.created_at) <= match[3]))
+          if (applicants.length > 0) {
+            applicants.map(u => {
+              expa.get(`opportunities/${id}/applicant.json?person_id=${u.person.id}`, ).then((applicant) => {
+                bot.sendMessage(msg.chat.id, `<a href="https://experience.aiesec.org/#/opportunities/${id}/applicant.json?person_id=${u.person.id}" >${applicant.full_name}</a> 
                   +${applicant.contact_info.country_code}${applicant.contact_info.phone}
                   ${aplicant.home_lc.country}
                   ${u.status}
                   ${applicant.managers[0]?`<a href='mailto:${applicant.managers[0].email}'>${applicant.managers[0].full_name}</a> 
                   +${applicant.managers[0].contact_info.country_code}${applicant.managers[0].contact_info.phone} `:'no managers'}`, {
-                parse_mode: "HTML"
+                  parse_mode: "HTML"
+                })
               })
             })
-          })
-        } else
-          bot.sendMessage(msg.chat.id, 'Nothing new(')
-      }).catch(console.log)
-  })
-  bot.sendMessage(msg.chat.id, 'Im work...');
+          } else
+            bot.sendMessage(msg.chat.id, `Nothing new for ${id}(`)
+        }).catch(e => bot.sendMessage(msg.chat.id, e.message))
+    })
+    bot.sendMessage(msg.chat.id, 'Im work...');
+  } catch (e) {
+    bot.sendMessage(msg.chat.id, e.message)
+  }
 });
 
 bot.onText(/\/start/, (msg) => {
@@ -231,6 +236,7 @@ bot.onText(/\/hello/, function (msg, match) {
   /newLCs <LC id>- subscribe to all users who registered today (on GMT time) at LC with id
   /myep <login> <password> - return your eps with changed state
   /lcep <LC id> - return eps with changed state for LC id
-  /lceps <LC id> - subscribe to eps with changed state for LC id`;
+  /lceps <LC id> - subscribe to eps with changed state for LC id
+  /applicants <TN ids separate by ','> <start date> <end date> - return applicants for TNs, who was applied between start and end dates(YYYY-MM-DD)`;
   bot.sendMessage(fromId, resp);
 });
