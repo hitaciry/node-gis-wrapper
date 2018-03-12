@@ -20,20 +20,13 @@ return(
         {/* Tell the Router to use our enhanced history */} 
         <BrowserRouter > 
             <Switch>       
-            <Route path="/getqrcode" component={GetQRCodeForm}/>
-            <Route path="/registration" component={RegistrationForm}/>
-            <Route path="/checkin/:userId" component={CheckInForm}/>
             <Route exact path="/dashboard" render={({ history}) =><Dashboard history={history}><p>Select tab</p></Dashboard>}/>
-            <Route exact path='/dashboard/users' render={({ history}) =><Dashboard history={history}><UsersTable/></Dashboard>}/>
-            <Route exact path='/dashboard/masterclass' render={({ history}) =><Dashboard history={history}><MasterClassTable/></Dashboard>} />
+            <Route exact path='/dashboard/LC/:id' render={({ history}) =><Dashboard history={history}><UsersTable/></Dashboard>}/>
             <Route exact path="/">
                 {
-                // <ul>
-                //     <li><Link to="/getqrcode" >qr code</Link></li>
-                //     <li><Link to="/registration">registration</Link></li>
-                //     <li><Link to="/checkin/(:userId)">check in</Link></li>
-                //     <li><Link to="/dashboard" >dashboard</Link></li>
-                // </ul>
+                <ul>
+                     <li><Link to="/dashboard" >dashboard</Link></li>
+                </ul>
                 }
             </Route>
             </Switch>

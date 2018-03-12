@@ -6,6 +6,8 @@
   "scripts": {
     "build": "babel src --out-dir dist ",
     "start": "node dist/index.js ",
+    "stat-build":"babel src/statistics_sync --out-dir dist/statistics_sync || babel src/credentials.js --out-file dist/credentials.js",
+    "stat-transfer-data": "node dist/statistics_sync/scheduler.js",
     "auto-start": "nodemon --exec \"yarn run build && yarn start\" --ignore public/js"
   },
   "repository": {
